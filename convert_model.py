@@ -222,8 +222,8 @@ function diffeq(du,u,p,t)\n\
             data_end = i
             #print('test:param_end find:',data_end,'\n\n\n\n')
 
-    for i in range(len(data)):
-        data[i] = data[i].strip('\n')
+    for i, d in enumerate(data):
+        data[i] = d.strip('\n')
 
     for i in range(data_start+1, data_end):
         data[i] = data[i].replace('x[C.', 'p[C.')
@@ -240,7 +240,7 @@ function diffeq(du,u,p,t)\n\
         differential_equation += data[i] + '\n'
     differential_equation += '\
     \n\
-    end'
+end'
 
     with open(jl_dir, mode='w') as f:
         f.write(differential_equation)
@@ -251,12 +251,12 @@ def search_end(data):
     end_line = []
 
     prev = 0
-    for i in range(len(data)):
-        if data[i].strip() == '':
+    for i, d in enumerate(data):
+        if d.strip() == '':
             ind = prev
         else:
-            ind = data[i].count('    ')
-            if data[i].find('else') != -1:
+            ind = d.count('    ')
+            if d.find('else') != -1:
                 ind = ind + 1
             prev = ind
         indents.append(ind)
@@ -266,7 +266,7 @@ def search_end(data):
         if indents[i] < indents[i-1] and i > 0:
             j = 1
             while data[i-j].strip(' ') == '':
-                j = j+1
+                j = j + 1
             #print('endline is ',i-j+1,indents[i-1]-1,data[i-j])
             end_line.append([i-j+1, indents[i-1]-1])
     return end_line
