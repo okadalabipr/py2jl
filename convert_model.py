@@ -65,11 +65,11 @@ def make_parameters(jl_dir, py_dir):
     data_end = 0
     with open(py_dir, mode='r') as f:
         data = f.readlines()
-        for i in range(len(data)):
-            if data[i].find('param_names = [\\') != -1:
+        for i, d in enumerate(data):
+            if d.find('param_names = [\\') != -1:
                 data_start = i
                 #print('\n\n\ntest:param_start find')
-            if data[i].find(']') != -1:
+            if d.find(']') != -1:
                 data_end = i
                 #print('test:param_end find\n\n\n\n')
 
@@ -108,11 +108,11 @@ def make_variables(jl_dir, py_dir):
     data_end = 0
     with open(py_dir, mode='r') as f:
         data = f.readlines()
-        for i in range(len(data)):
-            if data[i].find('var_names = [\\') != -1:
+        for i, d in enumerate(data):
+            if d.find('var_names = [\\') != -1:
                 data_start = i
                 #print('\n\n\ntest:var_start find')
-            if data[i].find(']') != -1:
+            if d.find(']') != -1:
                 data_end = i
                 #print('test:var_end find\n\n\n\n')
 
@@ -154,9 +154,9 @@ function f_params()::Vector{Float64}\n\
     with open(py_dir) as f:
         data = f.readlines()
 
-    for i in range(len(data)):
-        if data[i].find('x[C.') != -1:
-            param_const += data[i].replace('x[C.', 'p[C.')
+    for i, d in enumerate(data):
+        if d.find('x[C.') != -1:
+            param_const += d.replace('x[C.', 'p[C.')
 
     param_const += '\
     \n\
@@ -179,9 +179,9 @@ function initial_values()::Vector{Float64}\n\
     with open(py_dir) as f:
         data = f.readlines()
 
-    for i in range(len(data)):
-        if data[i].find('y0[') != -1:
-            initial_condition += data[i].replace('y0[V.', 'u0[V.')
+    for i, d in enumerate(data):
+        if d.find('y0[') != -1:
+            initial_condition += d.replace('y0[V.', 'u0[V.')
 
     initial_condition += '\
     \n\
@@ -203,11 +203,9 @@ def make_differential_equation(jl_dir, py_dir):
 function diffeq(du,u,p,t)\n\
     v::Vector{Float64} = zeros(\
 '
-    for i in range(len(data)):
-        if data[i].replace(' ', '').find('v=') != -1:
-            differential_equation += re.sub(
-                "\\D", "", data[i][data[i].find('*'):]
-            )
+    for i, d in enumerate(data):
+        if d.replace(' ', '').find('v=') != -1:
+            differential_equation += re.sub("\\D", "", d[d.find('*'):])
             data.pop(i)
             break
 
@@ -216,11 +214,11 @@ function diffeq(du,u,p,t)\n\
     data_start = 0
     data_end = 0
 
-    for i in range(len(data)):
-        if data[i].find('def diffeq(t,y,x):') != -1:
+    for i, d in enumerate(data):
+        if d.find('def diffeq(t,y,x):') != -1:
             data_start = i
             #print('\n\n\ntest:param_start find:',data_start)
-        if data[i].find('return dydt') != -1:
+        if d.find('return dydt') != -1:
             data_end = i
             #print('test:param_end find:',data_end,'\n\n\n\n')
 
@@ -275,12 +273,12 @@ def search_end(data):
 
 
 def insert_end(data, end_line):
-    for i in range(len(end_line)):
+    for i, line in enumerate(end_line):
         ind = ''
-        for j in range(end_line[i][1]):
+        for j in range(line[1]):
             ind += '    '
         ind += 'end'
-        data.insert(end_line[i][0]+i, ind)
+        data.insert(line[0]+i, ind)
 
     # for i in range(len(data)):
         # print(data[i])
