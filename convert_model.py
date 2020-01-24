@@ -6,9 +6,12 @@ py_dir = '.'
 
 
 def convert_model(jl_dir):
-    os.makedirs(jl_dir+'/model', exist_ok=True)
-    os.makedirs(jl_dir+'/model/name2idx', exist_ok=True)
-
+    os.makedirs(
+        jl_dir + '/model', exist_ok=True
+    )
+    os.makedirs(
+        jl_dir + '/model/name2idx', exist_ok=True
+    )
     make_name2idx(jl_dir)
     make_model(jl_dir)
     make_parameters(jl_dir, py_dir)
@@ -21,7 +24,7 @@ def convert_model(jl_dir):
 def make_name2idx(jl_dir):
     jl_dir = jl_dir + '/model/name2idx/name2idx.jl'
 
-    name2idx = "\
+    name2idx = '\
 module Name2Idx\n\
 \n\
 export C, V\n\
@@ -29,30 +32,28 @@ export C, V\n\
 include(\"parameters.jl\")\n\
 include(\"variables.jl\")\n\
 \n\
-end # module\
-"
-
+end  # module\
+'
     with open(jl_dir, mode='w') as f:
         f.write(name2idx)
 
 
 def make_model(jl_dir):
     jl_dir = jl_dir + '/model/model.jl'
-    model = "\
+    model = '\
 module Model\n\
 \n\
 export C, V, f_params, initial_values, diffeq\n\
 \n\
-include(\"name2idx/name2idx.jl\");\n\
+include(\"name2idx/name2idx.jl\")\n\
 using .Name2Idx\n\
 \n\
-include(\"param_const.jl\");\n\
-include(\"initial_condition.jl\");\n\
-include(\"differential_equation.jl\");\n\
+include(\"param_const.jl\")\n\
+include(\"initial_condition.jl\")\n\
+include(\"differential_equation.jl\")\n\
 \n\
-end # module\
-"
-
+end  # module\
+'
     with open(jl_dir, mode='w') as f:
         f.write(model)
 
@@ -72,18 +73,16 @@ def make_parameters(jl_dir, py_dir):
             if d.find(']') != -1:
                 data_end = i
                 #print('test:param_end find\n\n\n\n')
-
-    parameters = "\
+    parameters = '\
 module C\n\
 \n\
 const param_names = [\n\
-"
-
+'
 # 範囲は'param_names = [\および'len_f_params'\を除くためそれぞれ+-1
     for i in range(data_start+1, data_end-1):
         parameters += data[i].replace('\'', '\"')
 
-    parameters = parameters + "\
+    parameters = parameters + '\
 ]\n\
 \n\
 for (idx,name) in enumerate(param_names)\n\
@@ -92,10 +91,9 @@ end\n\
 \n\
 const len_f_params = length(param_names)\n\
 \n\
-end  # module"
-
+end  # module\
+'
     # print(parameters)
-
     with open(jl_dir, mode='w') as f:
         f.write(parameters)
 
@@ -115,17 +113,15 @@ def make_variables(jl_dir, py_dir):
             if d.find(']') != -1:
                 data_end = i
                 #print('test:var_end find\n\n\n\n')
-
-    variables = "\
+    variables = '\
 module V\n\
 \n\
-const var_names = [\n"
-
+const var_names = [\n\
+'
 # 範囲は'param_names = [\および'len_f_vars'\を除くためそれぞれ+-1
     for i in range(data_start+1, data_end-1):
         variables += data[i].replace('\'', '\"')
-
-    variables = variables + "\
+    variables = variables + '\
 ]\n\
 \n\
 for (idx,name) in enumerate(var_names)\n\
@@ -134,10 +130,9 @@ end\n\
 \n\
 const len_f_vars = length(var_names)\n\
 \n\
-end  # module"
-
+end  # module\
+'
     # print(variables)
-
     with open(jl_dir, mode='w') as f:
         f.write(variables)
 
@@ -150,19 +145,16 @@ def make_param_const(jl_dir, py_dir):
 function f_params()::Vector{Float64}\n\
     p::Vector{Float64} = zeros(C.len_f_params)\n\n\
 '
-
     with open(py_dir) as f:
         data = f.readlines()
-
     for i, d in enumerate(data):
         if d.find('x[C.') != -1:
             param_const += d.replace('x[C.', 'p[C.')
-
     param_const += '\
     \n\
     return p\n\
-end'
-
+end\
+'
     with open(jl_dir, mode='w') as f:
         f.write(param_const)
 
@@ -175,19 +167,16 @@ def make_initial_condition(jl_dir, py_dir):
 function initial_values()::Vector{Float64}\n\
     u0::Vector{Float64} = zeros(V.len_f_vars)\n\n\
 '
-
     with open(py_dir) as f:
         data = f.readlines()
-
     for i, d in enumerate(data):
         if d.find('y0[') != -1:
             initial_condition += d.replace('y0[V.', 'u0[V.')
-
     initial_condition += '\
     \n\
     return u0\n\
-end'
-
+end\
+'
     with open(jl_dir, mode='w') as f:
         f.write(initial_condition)
 
@@ -208,7 +197,6 @@ function diffeq(du,u,p,t)\n\
             differential_equation += re.sub("\\D", "", d[d.find('*'):])
             data.pop(i)
             break
-
     differential_equation += ')\n'
 
     data_start = 0
@@ -221,10 +209,8 @@ function diffeq(du,u,p,t)\n\
         if d.find('return dydt') != -1:
             data_end = i
             #print('test:param_end find:',data_end,'\n\n\n\n')
-
     for i, d in enumerate(data):
         data[i] = d.strip('\n')
-
     for i in range(data_start+1, data_end):
         data[i] = data[i].replace('x[C.', 'p[C.')
         data[i] = data[i].replace('y[V.', 'u[V.')
@@ -239,9 +225,8 @@ function diffeq(du,u,p,t)\n\
     for i in range(data_start+1, data_end):
         differential_equation += data[i] + '\n'
     differential_equation += '\
-    \n\
-end'
-
+end\
+'
     with open(jl_dir, mode='w') as f:
         f.write(differential_equation)
 
@@ -255,12 +240,11 @@ def search_end(data):
         if d.strip() == '':
             ind = prev
         else:
-            ind = d.count('    ')
+            ind = d.count('\t')
             if d.find('else') != -1:
                 ind = ind + 1
             prev = ind
         indents.append(ind)
-
     start = 0
     for i in range(len(data)):
         if indents[i] < indents[i-1] and i > 0:
@@ -276,7 +260,7 @@ def insert_end(data, end_line):
     for i, line in enumerate(end_line):
         ind = ''
         for j in range(line[1]):
-            ind += '    '
+            ind += '\t'
         ind += 'end'
         data.insert(line[0]+i, ind)
 
