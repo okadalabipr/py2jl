@@ -113,6 +113,5 @@ def differential_equation_header2():
 
 def differential_equation_footer():
     return "\
-\n\
 end\
 "
