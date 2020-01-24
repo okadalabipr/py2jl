@@ -5,34 +5,35 @@ def lines_triming(lines, space_num):
             break
     for i, line in enumerate(lines):
         if line.strip(' ') == '':
-            line = '\n'
+            rep_line = '\n'
+        else:
+            rep_line = line
+            space_counter = 0
+            for j, char in enumerate(rep_line):
+                if char == ' ':
+                    space_counter += 1
+                else:
+                    break
+            if space_counter != 0:
+                rep_line = rep_line.strip(' ')
+                for j in range(space_counter//space_num):
+                    rep_line = '    ' + rep_line
 
-        space_counter = 0
-        for j, char in enumerate(line):
-            if char == ' ':
-                space_counter += 1
-            else:
-                break
+            if (rep_line.find('if ') != -1
+                or rep_line.find('elif ') != -1
+                    or rep_line.find('else') != -1) and rep_line.find(':') != -1:
+                rep_line = rep_line.replace(':', '')
 
-        if space_counter != 0:
-            line = line.strip(' ')
-            for j in range(space_counter//space_num):
-                line = '    ' + line
+            rep_line = rep_line.replace('x[C.', 'p[C.')
+            rep_line = rep_line.replace('y[V.', 'u[V.')
+            rep_line = rep_line.replace('dydt[V.', 'du[V.')
+            rep_line = rep_line.replace('y0[V.', 'u0[V.')
+            rep_line = rep_line.replace('**', '^')
+            rep_line = rep_line.replace('elif ', 'elseif ')
+            rep_line = rep_line.replace('\'', '\"')
+            rep_line = rep_line.replace('\t', '    ')
 
-        if (line.find('if ') != -1
-            or line.find('elif ') != -1
-            or line.find('else ') != -1) and line.find(':') != -1:
-            line = line.replace(':', '')
-
-        line = line.replace('x[C.', 'p[C.')
-        line = line.replace('\t', '    ')
-        line = line.replace('y[V.', 'u[V.')
-        line = line.replace('dydt[V.', 'du[V.')
-        line = line.replace('**', '^')
-        line = line.replace('elif ', 'elseif ')
-        line = line.replace('\'', '\"')
-
-        lines[i] = line
+        lines[i] = rep_line
 
     return lines
 
