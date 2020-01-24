@@ -55,15 +55,15 @@ def make_parameters(jl_dir, py_dir, space_num):
 
     parameters = jl_source.parameters_header()
 
-    keywords = False
+    is_keyword = False
     for i, line in enumerate(lines):
         if lines[i-1].find('param_names') != -1:
-            keywords = True
+            is_keyword = True
             #print('\n\n\ntest:start of values is found')
-        elif keywords and line.find('len_f_params') != -1:
+        elif is_keyword and line.find('len_f_params') != -1:
             break
             #print('test:end of values is found\n\n\n\n')
-        if keywords:
+        if is_keyword:
             parameters += line
 
     parameters = parameters + jl_source.parameters_footer()
@@ -82,15 +82,15 @@ def make_variables(jl_dir, py_dir, space_num):
 
     variables = jl_source.variables_header()
 
-    keywords = False
+    is_keyword = False
     for i, line in enumerate(lines):
         if lines[i-1].find('var_names') != -1:
-            keywords = True
+            is_keyword = True
             #print('\n\n\ntest:start of values is found')
-        elif keywords and line.find('len_f_vars') != -1:
+        elif is_keyword and line.find('len_f_vars') != -1:
             break
             #print('test:end of values is found\n\n\n\n')
-        if keywords:
+        if is_keyword:
             variables += line
 
     variables = variables + jl_source.variables_footer()
@@ -109,15 +109,15 @@ def make_param_const(jl_dir, py_dir, space_num):
 
     param_const = jl_source.param_const_header()
 
-    keywords = False
+    is_keyword = False
     for i, line in enumerate(lines):
         if lines[i-1].find('len_f_params') != -1:
-            keywords = True
+            is_keyword = True
             #print('\n\n\ntest:start of values is found')
-        elif keywords and line.find('return x') != -1:
+        elif is_keyword and line.find('return x') != -1:
             break
             #print('test:end of values is found\n\n\n\n')
-        if keywords:
+        if is_keyword:
             param_const += line
 
     param_const += jl_source.param_const_footer()
@@ -136,15 +136,15 @@ def make_initial_condition(jl_dir, py_dir, space_num):
 
     initial_condition = jl_source.initial_condition_header()
 
-    keywords = False
+    is_keyword = False
     for i, line in enumerate(lines):
         if lines[i-1].find('len_f_vars') != -1:
-            keywords = True
+            is_keyword = True
             #print('\n\n\ntest:start of values is found')
-        elif keywords and line.find('return y0') != -1:
+        elif is_keyword and line.find('return y0') != -1:
             break
             #print('test:end of values is found\n\n\n\n')
-        if keywords:
+        if is_keyword:
             initial_condition += line
 
     initial_condition += jl_source.initial_condition_footer()
@@ -177,15 +177,15 @@ def make_differential_equation(jl_dir, py_dir, space_num):
             break
     differential_equation += jl_source.differential_equation_header2()
 
-    keywords = False
+    is_keyword = False
     for i, line in enumerate(lines):
         if lines[i-1].find('def diffeq(t,y,x):') != -1:
-            keywords = True
+            is_keyword = True
             #print('\n\n\ntest:start of values is found')
-        elif keywords and line.find('return dydt') != -1:
+        elif is_keyword and line.find('return dydt') != -1:
             break
             #print('test:end of values is found\n\n\n\n')
-        if keywords:
+        if is_keyword:
             differential_equation += line
 
     differential_equation += jl_source.differential_equation_footer()
