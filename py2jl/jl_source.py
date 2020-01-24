@@ -10,6 +10,7 @@ include(\"variables.jl\")\n\
 end # module\
 "
 
+
 def model_header():
     return "\
 module Model\n\
@@ -34,6 +35,7 @@ module C\n\
 const param_names = [\n\
 "
 
+
 def parameters_footer():
     return "\
 ]\n\
@@ -47,12 +49,14 @@ const len_f_params = length(param_names)\n\
 end  # module\
 "
 
+
 def variables_header():
     return "\
 module V\n\
 \n\
 const var_names = [\n\
 "
+
 
 def variables_footer():
     return "\
@@ -67,11 +71,13 @@ const len_f_vars = length(var_names)\n\
 end  # module\
 "
 
+
 def param_const_header():
     return "\
 function f_params()::Vector{Float64}\n\
     p::Vector{Float64} = zeros(C.len_f_params)\n\
 "
+
 
 def param_const_footer():
     return "\
@@ -79,11 +85,13 @@ def param_const_footer():
 end\
 "
 
+
 def initial_condition_header():
     return "\
 function initial_values()::Vector{Float64}\n\
     u0::Vector{Float64} = zeros(V.len_f_vars)\n\
 "
+
 
 def initial_condition_footer():
     return "\
@@ -91,14 +99,17 @@ def initial_condition_footer():
 end\
 "
 
+
 def differential_equation_header1():
     return "\
 function diffeq(du,u,p,t)\n\
     v::Vector{Float64} = zeros(\
 "
 
+
 def differential_equation_header2():
     return ")"
+
 
 def differential_equation_footer():
     return "\
