@@ -5,7 +5,7 @@ jl_dir = 'converted'
 py_dir = '.'
 
 
-def convert_model(jl_dir):
+def convert_model(jl_dir, py_dir):
     os.makedirs(
         jl_dir + '/model', exist_ok=True
     )
@@ -270,4 +270,4 @@ def insert_end(data, end_line):
 
 
 if __name__ == '__main__':
-    convert_model(jl_dir)
+    convert_model(jl_dir, py_dir)
