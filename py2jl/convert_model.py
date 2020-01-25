@@ -29,18 +29,14 @@ def convert_model(jl_dir, py_dir):
 
 def make_name2idx(jl_dir):
     jl_dir = jl_dir + '/model/name2idx/name2idx.jl'
-
     name2idx = jl_source.make_name2idx_header()
-
     with open(jl_dir, mode='w') as f:
         f.write(name2idx)
 
 
 def make_model(jl_dir):
-    jl_dir = jl_dir + '/model/model.jl'\
-
+    jl_dir = jl_dir + '/model/model.jl'
     model = jl_source.model_header()
-
     with open(jl_dir, mode='w') as f:
         f.write(model)
 
@@ -48,7 +44,6 @@ def make_model(jl_dir):
 def make_parameters(jl_dir, py_dir, space_num):
     jl_dir = jl_dir + '/model/name2idx/parameters.jl'
     py_dir = py_dir + '/model/name2idx/parameters.py'
-
     with open(py_dir, mode='r') as f:
         lines = f.readlines()
     lines = triming_tools.lines_triming(lines, space_num)
@@ -161,8 +156,8 @@ def make_differential_equation(jl_dir, py_dir, space_num):
         lines = f.readlines()
     lines = triming_tools.lines_triming(lines, space_num)
     lines = triming_tools.insert_end(
-        lines, triming_tools.search_end(lines, space_num))
-
+        lines, triming_tools.search_end(lines, space_num)
+    )
     differential_equation = jl_source.differential_equation_header1()
     for i, line in enumerate(lines):
         if line.replace(' ', '').find('v=') != -1:
