@@ -54,7 +54,7 @@ def search_end(lines, space_num):
             prev = ind
         indents.append(ind)
 
-    for i in range(len(lines)):
+    for i, _ in enumerate(lines):
         if indents[i] < indents[i-1] and i > 0:
             j = 1
             while lines[i-j].strip() == '':
