@@ -11,3 +11,8 @@ __pycache__/
 *.ipynb
 .ipynb_checkpoints
 
+# original model/
+model/
+
+# converted files
+converted/
