@@ -100,15 +100,20 @@ end\
 "
 
 
-def differential_equation_header1():
-    return "\
+def differential_equation_header1(rate_equations):
+    if not rate_equations:
+        return "\
 function diffeq(du,u,p,t)\n\
-    v::Vector{Float64} = zeros(\
 "
+    else:
+        return "\
+function diffeq(du,u,p,t)\n\
+    %s::Vector{Float64} = zeros(\
+" % (rate_equations)
 
 
 def differential_equation_header2():
-    return ")"
+    return ")\n"
 
 
 def differential_equation_footer():

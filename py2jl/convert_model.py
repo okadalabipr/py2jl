@@ -24,7 +24,7 @@ def convert_model(jl_dir, py_dir):
     make_variables(jl_dir, py_dir, space_num=4)
     make_param_const(jl_dir, py_dir, space_num=4)
     make_initial_condition(jl_dir, py_dir, space_num=4)
-    make_differential_equation(jl_dir, py_dir, space_num=4)
+    make_differential_equation(jl_dir, py_dir, space_num=4, rate_equations='v')
 
 
 def make_name2idx(jl_dir):
@@ -148,7 +148,7 @@ def make_initial_condition(jl_dir, py_dir, space_num):
         f.write(initial_condition)
 
 
-def make_differential_equation(jl_dir, py_dir, space_num):
+def make_differential_equation(jl_dir, py_dir, space_num, rate_equations=''):
     jl_dir = jl_dir + '/model/differential_equation.jl'
     py_dir = py_dir + '/model/differential_equation.py'
 
@@ -158,23 +158,25 @@ def make_differential_equation(jl_dir, py_dir, space_num):
     lines = triming_tools.insert_end(
         lines, triming_tools.search_end(lines, space_num)
     )
-    differential_equation = jl_source.differential_equation_header1()
-    for i, line in enumerate(lines):
-        if line.replace(' ', '').find('v=') != -1:
-            differential_equation += str(
-                int(
-                    re.sub(
-                        "\\D", "", line[line.find('*'):]
-                    )
-                ) - 1
-            )
-            lines.pop(i)
-            break
-    differential_equation += jl_source.differential_equation_header2()
+    differential_equation = jl_source.differential_equation_header1(rate_equations)
+    if rate_equations != '':
+        for i, line in enumerate(lines):
+            if line.replace(' ', '').find('{}='.format(rate_equations)) != -1:
+                differential_equation += str(
+                    int(
+                        re.sub(
+                            "\\D", "", line[line.find('*'):]
+                        )
+                    ) - 1
+                )
+                lines.pop(i)
+                break
+        differential_equation += jl_source.differential_equation_header2()
 
     is_keyword = False
     for i, line in enumerate(lines):
-        if lines[i-1].find('def diffeq(t,y,x):') != -1:
+        if (lines[i-1].replace(' ', '').find('diffeq(t,y,x):') != -1
+            or lines[i-1].replace(' ', '').find('diffeq(y,t,*x):') != -1):
             is_keyword = True
             #print('\n\n\ntest:start of values is found')
         elif is_keyword and line.find('return dydt') != -1:
