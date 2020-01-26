@@ -17,12 +17,12 @@ module Model\n\
 \n\
 export C, V, f_params, initial_values, diffeq\n\
 \n\
-include(\"name2idx/name2idx.jl\");\n\
+include(\"name2idx/name2idx.jl\")\n\
 using .Name2Idx\n\
 \n\
-include(\"param_const.jl\");\n\
-include(\"initial_condition.jl\");\n\
-include(\"differential_equation.jl\");\n\
+include(\"param_const.jl\")\n\
+include(\"initial_condition.jl\")\n\
+include(\"differential_equation.jl\")\n\
 \n\
 end # module\
 "
