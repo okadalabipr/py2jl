@@ -1,5 +1,5 @@
 def lines_triming(lines, space_num):
-    #processing backslash
+    # processing backslash
     for i,line in enumerate(lines):
         if line.find('param_names = [\\')!=-1 or line.find('var_names = [\\')!=-1 \
             or line.find('\'len_f_params\'\\')!=-1 or line.find('\'len_f_vars\'\\')!=-1:
@@ -10,9 +10,9 @@ def lines_triming(lines, space_num):
                 lines[i] = lines[i].rstrip().replace('\\',' ') + lines[i+1].lstrip()
                 lines.pop(i+1)
 
-    #replace characters
+    # replace characters
     for i, line in enumerate(lines):
-        #make br with space into simple br
+        # make br with space into simple br
         if line.strip(' ') == '':
             rep_line = '\n'
         else:
@@ -63,7 +63,7 @@ def search_end(lines, space_num):
             while lines[i-j].strip() == '':
                 #print('line',i-j+2,'is blank')
                 j = j + 1
-            #rint('endline is ',i-j+1,indents[i-1]-1,lines[i-j])
+            #print('endline is ',i-j+1,indents[i-1]-1,lines[i-j])
             end_lines.append([i-j+1, indents[i-1]-1])
     # print(end_lines)
     return end_lines
