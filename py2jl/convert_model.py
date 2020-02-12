@@ -5,13 +5,14 @@ from py2jl import triming_tools
 
 
 def convert_model(jl_dir, py_dir):
-    """
+    '''
     space_num = int(
         input(
             'How many spaces do you use for indentation? (input integer):'
         )
     )
-    """
+    '''
+
     os.makedirs(
         jl_dir + '/model', exist_ok=True
     )
@@ -24,7 +25,7 @@ def convert_model(jl_dir, py_dir):
     make_variables(jl_dir, py_dir, space_num=4)
     make_param_const(jl_dir, py_dir, space_num=4)
     make_initial_condition(jl_dir, py_dir, space_num=4)
-    make_differential_equation(jl_dir, py_dir, space_num=4, rate_equations='v')
+    make_differential_equation(jl_dir, py_dir, space_num=4)
 
 
 def make_name2idx(jl_dir):
@@ -158,21 +159,17 @@ def make_differential_equation(jl_dir, py_dir, space_num, rate_equations=''):
     lines = triming_tools.insert_end(
         lines, triming_tools.search_end(lines, space_num)
     )
-    differential_equation = jl_source.differential_equation_header1(rate_equations)
-    if rate_equations != '':
-        for i, line in enumerate(lines):
-            if line.replace(' ', '').find('{}='.format(rate_equations)) != -1:
-                differential_equation += str(
-                    int(
-                        re.sub(
-                            "\\D", "", line[line.find('*'):]
-                        )
-                    ) - 1
-                )
-                lines.pop(i)
-                break
-        differential_equation += jl_source.differential_equation_header2()
+    differential_equation = jl_source.differential_equation_header1()
 
+    for i,line in enumerate(lines):
+        rep_line =line.replace(' ','')
+        if rep_line.find('[0]*')!=-1:
+            if rep_line.find('dydt')==-1:
+                vector_name = rep_line[:rep_line.find('=')].strip(' ')
+                elemets_num = rep_line[(rep_line.replace(' ','')).find('[0]*')+4:].strip(' ').strip('\n')
+                lines[i] = jl_source.differential_equation_header2(vector_name,elemets_num)
+            else:
+                lines[i] = ''
     is_keyword = False
     for i, line in enumerate(lines):
         if (lines[i-1].replace(' ', '').find('diffeq(t,y,x):') != -1
