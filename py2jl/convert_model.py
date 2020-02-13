@@ -21,11 +21,11 @@ def convert_model(jl_dir, py_dir):
     )
     make_name2idx(jl_dir)
     make_model(jl_dir)
-    make_parameters(jl_dir, py_dir, space_num=4)
-    make_variables(jl_dir, py_dir, space_num=4)
-    make_param_const(jl_dir, py_dir, space_num=4)
-    make_initial_condition(jl_dir, py_dir, space_num=4)
-    make_differential_equation(jl_dir, py_dir, space_num=4)
+    make_parameters(jl_dir, py_dir)
+    make_variables(jl_dir, py_dir)
+    make_param_const(jl_dir, py_dir)
+    make_initial_condition(jl_dir, py_dir)
+    make_differential_equation(jl_dir, py_dir)
 
 
 def make_name2idx(jl_dir):
@@ -156,9 +156,7 @@ def make_differential_equation(jl_dir, py_dir, space_num, rate_equations=''):
     with open(py_dir, mode='r') as f:
         lines = f.readlines()
     lines = triming_tools.lines_triming(lines, space_num)
-    lines = triming_tools.insert_end(
-        lines, triming_tools.search_end(lines, space_num)
-    )
+    lines = triming_tools.insert_end(lines)
     differential_equation = jl_source.differential_equation_header1()
 
     for i,line in enumerate(lines):
