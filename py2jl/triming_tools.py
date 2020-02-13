@@ -11,11 +11,11 @@ def lines_triming(lines, space_num=4):
 def remove_backslash(lines):
     for i,line in enumerate(lines):
         if line.find('param_names = [\\')!=-1 or line.find('var_names = [\\')!=-1 \
-            or line.find('\'len_f_params\'\\')!=-1 or line.find('\'len_f_vars\'\\')!=-1:
+            or line.find('\'len_f_params\'\\') != -1 or line.find('\'len_f_vars\'\\') != -1:
             lines[i] = lines[i].replace('\\',' ')
     
         else:
-            while(lines[i][-3:].find('\\\n')!=-1):
+            while(lines[i][-3:].find('\\\n') != -1):
                 lines[i] = lines[i].rstrip().replace('\\',' ') + lines[i+1].lstrip()
                 lines.pop(i+1)
     
@@ -56,7 +56,10 @@ def space_counter(line):
 def replace_characters(lines):
     for i,line in enumerate(lines):
         rep_line = line
-        if (rep_line.find('if ') != -1 or rep_line.find('elif ') != -1 or rep_line.find('else ') != -1 or rep_line.find('for ') != -1) \
+        if (rep_line.find('if ') != -1
+            or rep_line.find('elif ') != -1
+            or rep_line.find('else ') != -1
+            or rep_line.find('for ') != -1) \
             and rep_line.find(':') != -1:
             rep_line = rep_line.replace(':', '')
 
@@ -99,7 +102,7 @@ def search_end(lines):
         if line.strip() == '':
             ind = prev
             #print(i,' is blank line')
-        elif bracket1>0 or bracket2>0 or bracket3>0:
+        elif bracket1> 0 or bracket2> 0 or bracket3> 0:
             ind = prev
         else:
             c = 0
@@ -112,15 +115,15 @@ def search_end(lines):
                 ind = ind + 1
             prev = ind
 
-        if line.count('(') - line.count(')') >0:
+        if line.count('(') - line.count(')') > 0:
             bracket1 += line.count('(') - line.count(')')
         else:
             bracket1 -=  line.count(')') - line.count('(')
-        if line.count('{') - line.count('}') >0:
+        if line.count('{') - line.count('}') > 0:
             bracket2 += line.count('{') - line.count('}')
         else:
             bracket2 -=  line.count('}') - line.count('{')
-        if line.count('[') - line.count(']') >0:
+        if line.count('[') - line.count(']') > 0:
             bracket3 += line.count('[') - line.count(']')
         else:
             bracket3 -=  line.count(']') - line.count('[')
@@ -148,9 +151,9 @@ def search_end(lines):
 def convert_comment_out(lines):
     count=0
     for i,line in enumerate(lines):
-        if line.find('\'\'\'')!=-1:
-            count +=1
-        if count%2==1:
+        if line.find('\'\'\'') != -1:
+            count += 1
+        if count%2 == 1:
             lines[i] = line.replace('\'\'\'','#=')
         else:
             lines[i] = line.replace('\'\'\'','=#')
