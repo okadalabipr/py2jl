@@ -139,8 +139,8 @@ def search_end(lines):
             #print('endline is ',i-j+1,indents[i-1]-1,lines[i-j])
             for k in range(diff):
                 end_lines.append([i-j+1, indents[i-1]-1-k])
-    for i,line in enumerate(lines):
-        print(indents[i],line.rstrip())
+    # for i,line in enumerate(lines):
+        # print(indents[i],line.rstrip())
     # print(end_lines)
 
     #for i,line in enumerate(lines):

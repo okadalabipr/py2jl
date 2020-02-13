@@ -5,8 +5,8 @@ from py2jl import jl_source_sp
 
 
 def convert_search_parameter(jl_dir, py_dir):
-
-    space_num=4
+    os.makedirs(jl_dir, exist_ok=True)
+    space_num = 4
     with open(py_dir+'/search_parameter.py') as f:
         lines = f.readlines()
 
