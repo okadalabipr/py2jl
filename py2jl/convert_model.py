@@ -149,7 +149,7 @@ def make_initial_condition(jl_dir, py_dir, space_num):
         f.write(initial_condition)
 
 
-def make_differential_equation(jl_dir, py_dir, space_num, rate_equations=''):
+def make_differential_equation(jl_dir, py_dir, space_num):
     jl_dir = jl_dir + '/model/differential_equation.jl'
     py_dir = py_dir + '/model/differential_equation.py'
 

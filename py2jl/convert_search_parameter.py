@@ -1,17 +1,17 @@
 import os
 import re
 from py2jl import triming_tools
-from py2jl import jl_source_sp
+from py2jl import jl_source_SP
 
 
 def convert_search_parameter(jl_dir, py_dir):
-    os.makedirs(jl_dir, exist_ok=True)
-    space_num = 4
+
+    space_num=4
     with open(py_dir+'/search_parameter.py') as f:
         lines = f.readlines()
 
-    search_parameter = jl_source_sp.header()
-    search_parameter += jl_source_sp.search_idx_const_header()
+    search_parameter = jl_source_SP.header()
+    search_parameter += jl_source_SP.search_idx_const_header()
 
     search_idx_const=[]
     is_keyword=False
@@ -23,9 +23,9 @@ def convert_search_parameter(jl_dir, py_dir):
             if line.find(']') != -1:
                 break
             search_parameter += line.replace(',','')    
-    search_parameter += jl_source_sp.search_idx_const_footer()
+    search_parameter += jl_source_SP.search_idx_const_footer()
 
-    search_parameter += jl_source_sp.get_search_region_header()
+    search_parameter += jl_source_SP.get_search_region_header()
 
     lines = triming_tools.convert_comment_out(lines)
     lines = triming_tools.lines_triming(lines, space_num)
@@ -45,8 +45,8 @@ def convert_search_parameter(jl_dir, py_dir):
                 break
             search_parameter += line
 
-    search_parameter += jl_source_sp.get_search_region_footer()
-    search_parameter += jl_source_sp.lin2log()
+    search_parameter += jl_source_SP.get_search_region_footer()
+    search_parameter += jl_source_SP.lin2log()
 
     with open(jl_dir+'/search_params.jl',mode='w')as f:
         f.write(search_parameter)
