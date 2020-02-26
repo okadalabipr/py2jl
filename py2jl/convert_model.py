@@ -42,7 +42,7 @@ def make_model(jl_dir):
         f.write(model)
 
 
-def make_parameters(jl_dir, py_dir, space_num):
+def make_parameters(jl_dir, py_dir, space_num=4):
     jl_dir = jl_dir + '/model/name2idx/parameters.jl'
     py_dir = py_dir + '/model/name2idx/parameters.py'
     with open(py_dir, mode='r') as f:
@@ -68,7 +68,7 @@ def make_parameters(jl_dir, py_dir, space_num):
         f.write(parameters)
 
 
-def make_variables(jl_dir, py_dir, space_num):
+def make_variables(jl_dir, py_dir, space_num=4):
     jl_dir = jl_dir + '/model/name2idx/variables.jl'
     py_dir = py_dir + '/model/name2idx/variables.py'
 
@@ -95,7 +95,7 @@ def make_variables(jl_dir, py_dir, space_num):
         f.write(variables)
 
 
-def make_param_const(jl_dir, py_dir, space_num):
+def make_param_const(jl_dir, py_dir, space_num=4):
     jl_dir = jl_dir + '/model/param_const.jl'
     py_dir = py_dir + '/model/param_const.py'
 
@@ -122,7 +122,7 @@ def make_param_const(jl_dir, py_dir, space_num):
         f.write(param_const)
 
 
-def make_initial_condition(jl_dir, py_dir, space_num):
+def make_initial_condition(jl_dir, py_dir, space_num=4):
     jl_dir = jl_dir + '/model/initial_condition.jl'
     py_dir = py_dir + '/model/initial_condition.py'
 
@@ -149,7 +149,7 @@ def make_initial_condition(jl_dir, py_dir, space_num):
         f.write(initial_condition)
 
 
-def make_differential_equation(jl_dir, py_dir, space_num):
+def make_differential_equation(jl_dir, py_dir, space_num=4):
     jl_dir = jl_dir + '/model/differential_equation.jl'
     py_dir = py_dir + '/model/differential_equation.py'
 
