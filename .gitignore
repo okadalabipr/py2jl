@@ -11,8 +11,10 @@ __pycache__/
 *.ipynb
 .ipynb_checkpoints
 
-# original model/
+# original
 model/
+search_parameter.py
+observable.py
 
 # converted files
 converted/
