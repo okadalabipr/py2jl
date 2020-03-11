@@ -1,5 +1,5 @@
 import os
-from py2jl import jl_source_observable
+from py2jl import jl_source
 from py2jl import triming_tools
 
 
@@ -16,13 +16,13 @@ def make_observable(jl_dir, py_dir):
     with open(py_dir+'/observable.py') as f:
         lines = f.readlines()
 
-    observable = jl_source_observable.observable_header()
+    observable = jl_source.observable_header()
 
     observables = triming_tools.cut_out_lines(lines,'observables=[',']')[1:]
     for i,line in enumerate(observables):
         observable += line.replace(',','').replace('\'','\"')
 
-    observable += jl_source_observable.observable_body()
+    observable += jl_source.observable_body()
 
     with open(jl_dir+'/observable.jl',mode='w')as f:
         f.write(observable)
@@ -35,7 +35,7 @@ def make_simulation(jl_dir, py_dir):
     lines = triming_tools.cut_out_lines(lines,'class NumericalSimulation','class ExperimentalData')
     lines = triming_tools.lines_triming(lines)
 
-    simulation = jl_source_observable.simulation_header()
+    simulation = jl_source.simulation_header()
 
     line_tspan = triming_tools.cut_out_line(lines,'tspan=')
     line_tspan = line_tspan.replace('[','(').replace(']',')')
@@ -58,17 +58,16 @@ def make_simulation(jl_dir, py_dir):
         triming_tools.insert_after_indent(line_conditions, 'const ') + '\n',1
     )
 
-    simulation += jl_source_observable.simulation_body1()
+    simulation += jl_source.simulation_body1()
 
     conditions1 = triming_tools.cut_out_lines(lines,'def simulate(','enumerate(self.conditions)')
 
 
     conditions1_1 = triming_tools.cut_out_lines(conditions1,'def simulate(','_get_steady_state')[1:]
     conditions1_2 = triming_tools.cut_out_lines(conditions1,'y0','enumerate(self.conditions)')[1:]
-    print(conditions1_2)
     for i,line in enumerate(conditions1_1):
         simulation += line
-    simulation += jl_source_observable.simulation_body2()
+    simulation += jl_source.simulation_body2()
     for i,line in enumerate(conditions1_2):
         simulation += line
 
@@ -79,7 +78,7 @@ def make_simulation(jl_dir, py_dir):
     for i,line in enumerate(conditions2):
         simulation += line.replace('self.','')
     
-    simulation += jl_source_observable.simulation_body3()
+    simulation += jl_source.simulation_body3()
 
     get_timepoint = triming_tools.cut_out_lines(lines,'simulations[','class ExperimentalData',mode=1)
     for i,line in enumerate(get_timepoint):
@@ -96,7 +95,7 @@ def make_simulation(jl_dir, py_dir):
             rep_line = rep_line.replace(':,','j,')
         simulation += rep_line
 
-    simulation += jl_source_observable.simulation_footer()
+    simulation += jl_source.simulation_footer()
     
     with open(jl_dir+'/simulation.jl',mode='w')as f:
         f.write(simulation)
@@ -131,13 +130,13 @@ def make_experimental_data(jl_dir, py_dir):
                 bracket = False
         lines[i]=rep_line
 
-    experimental_data = jl_source_observable.experimental_data_header()
+    experimental_data = jl_source.experimental_data_header()
 
     experiments = triming_tools.cut_out_lines(lines,'len(observables)','def get_timepoint',mode=1)[1:-1]
     for i,line in enumerate(experiments):
         experimental_data += triming_tools.indent_remover(line,1)
     
-    experimental_data += jl_source_observable.get_timepoint_header()
+    experimental_data += jl_source.get_timepoint_header()
 
     get_timepoint = triming_tools.cut_out_lines(lines,'def get_timepoint','return')[1:]
     for i,line in enumerate(get_timepoint):
@@ -152,7 +151,7 @@ def make_experimental_data(jl_dir, py_dir):
             rep_line += line.replace(' ','').replace('exp_t=self.','return ')
         experimental_data += triming_tools.indent_remover(rep_line,1)
     
-    experimental_data += jl_source_observable.get_timepoint_footer()
+    experimental_data += jl_source.get_timepoint_footer()
 
     with open(jl_dir+'/experimental_data.jl',mode='w')as f:
         f.write(experimental_data)
