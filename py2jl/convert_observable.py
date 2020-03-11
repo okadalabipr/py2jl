@@ -34,6 +34,8 @@ def make_simulation(jl_dir, py_dir):
 
     lines = triming_tools.cut_out_lines(lines,'class NumericalSimulation','class ExperimentalData')
     lines = triming_tools.lines_triming(lines)
+    for i,line in enumerate(lines):
+        lines[i] = triming_tools.copy_list(line)
 
     simulation = jl_source.simulation_header()
 

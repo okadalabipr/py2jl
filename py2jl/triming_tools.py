@@ -239,3 +239,12 @@ def cut_out_lines(lines,start_keyword='',end_keyword='',mode=0):
         return lines[start:]
     else:
         return lines[start:end]
+
+def copy_list(line):
+    if line.find('[:]')==-1:
+        return line
+
+    params = line[line.find('=')+1:line.find('[:]')].replace(' ','')
+    copy = line[:line.find('=')+1] + ' copy(' + params + ')' + line[line.find('[:]')+3:]
+
+    return copy
