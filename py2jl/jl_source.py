@@ -125,20 +125,6 @@ def observable_body():
 function obs_idx(observable_name::String)::Int\n\
 \n\
     return findfirst(isequal(observable_name),observables)\n\
-end\n\
-\n\
-function diff_sim_and_exp(sim_matrix::Matrix{Float64},exp_dict::Dict{String,Array{Float64,1}},\n\
-                            exp_timepoint::Vector{Float64},conditions::Vector{String};\n\
-                            sim_norm_max::Float64,exp_norm_max::Float64)\n\
-    sim_result::Vector{Float64} = []\n\
-    exp_result::Vector{Float64} = []\n\
-    \n\
-    for (i,condition) in enumerate(conditions)\n\
-        append!(sim_result,sim_matrix[Int.(exp_timepoint.+1),i])\n\
-        append!(exp_result,exp_dict[condition])\n\
-    end\n\
-\n\
-    return (sim_result./sim_norm_max, exp_result./exp_norm_max)\n\
 end\
 '
 
