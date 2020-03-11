@@ -48,20 +48,11 @@ def make_parameters(jl_dir, py_dir, space_num=4):
     with open(py_dir, mode='r') as f:
         lines = f.readlines()
     lines = triming_tools.lines_triming(lines, space_num)
+    lines = triming_tools.cut_out_lines(lines, 'param_names','len_f_params')[1:]
 
     parameters = jl_source.parameters_header()
-
-    is_keyword = False
-    for i, line in enumerate(lines):
-        if lines[i-1].find('param_names') != -1:
-            is_keyword = True
-            #print('\n\n\ntest:start of values is found')
-        elif is_keyword and line.find('len_f_params') != -1:
-            break
-            #print('test:end of values is found\n\n\n\n')
-        if is_keyword:
-            parameters += line
-
+    for i,line in enumerate(lines):
+        parameters += line
     parameters = parameters + jl_source.parameters_footer()
 
     with open(jl_dir, mode='w') as f:
@@ -75,20 +66,11 @@ def make_variables(jl_dir, py_dir, space_num=4):
     with open(py_dir, mode='r') as f:
         lines = f.readlines()
     lines = triming_tools.lines_triming(lines, space_num)
+    lines = triming_tools.cut_out_lines(lines, 'var_names','len_f_vars')[1:]
 
     variables = jl_source.variables_header()
-
-    is_keyword = False
-    for i, line in enumerate(lines):
-        if lines[i-1].find('var_names') != -1:
-            is_keyword = True
-            #print('\n\n\ntest:start of values is found')
-        elif is_keyword and line.find('len_f_vars') != -1:
-            break
-            #print('test:end of values is found\n\n\n\n')
-        if is_keyword:
-            variables += line
-
+    for i,line in enumerate(lines):
+        variables += line
     variables = variables + jl_source.variables_footer()
 
     with open(jl_dir, mode='w') as f:
@@ -102,22 +84,12 @@ def make_param_const(jl_dir, py_dir, space_num=4):
     with open(py_dir, mode='r') as f:
         lines = f.readlines()
     lines = triming_tools.lines_triming(lines, space_num)
+    lines = triming_tools.cut_out_lines(lines, 'len_f_params','return x')[1:]
 
     param_const = jl_source.param_const_header()
-
-    is_keyword = False
-    for i, line in enumerate(lines):
-        if lines[i-1].find('len_f_params') != -1:
-            is_keyword = True
-            #print('\n\n\ntest:start of values is found')
-        elif is_keyword and line.find('return x') != -1:
-            break
-            #print('test:end of values is found\n\n\n\n')
-        if is_keyword:
-            param_const += line
-
+    for i,line in enumerate(lines):
+        param_const += line
     param_const += jl_source.param_const_footer()
-
     with open(jl_dir, mode='w') as f:
         f.write(param_const)
 
@@ -129,20 +101,11 @@ def make_initial_condition(jl_dir, py_dir, space_num=4):
     with open(py_dir, mode='r') as f:
         lines = f.readlines()
     lines = triming_tools.lines_triming(lines, space_num)
+    lines = triming_tools.cut_out_lines(lines, 'len_f_vars','return y0')[1:]
 
     initial_condition = jl_source.initial_condition_header()
-
-    is_keyword = False
-    for i, line in enumerate(lines):
-        if lines[i-1].find('len_f_vars') != -1:
-            is_keyword = True
-            #print('\n\n\ntest:start of values is found')
-        elif is_keyword and line.find('return y0') != -1:
-            break
-            #print('test:end of values is found\n\n\n\n')
-        if is_keyword:
-            initial_condition += line
-
+    for i,line in enumerate(lines):
+        initial_condition += line
     initial_condition += jl_source.initial_condition_footer()
 
     with open(jl_dir, mode='w') as f:
@@ -163,11 +126,15 @@ def make_differential_equation(jl_dir, py_dir, space_num=4):
         rep_line =line.replace(' ','')
         if rep_line.find('[0]*')!=-1:
             if rep_line.find('dydt')==-1:
-                vector_name = rep_line[:rep_line.find('=')].strip(' ')
-                elemets_num = rep_line[(rep_line.replace(' ','')).find('[0]*')+4:].strip(' ').strip('\n')
+                rep_line_trim = rep_line.replace(' ','').strip()
+                vector_name = rep_line_trim[:rep_line_trim.find('=')]
+                elemets_num = rep_line_trim[rep_line_trim.find('[0]*')+4:rep_line_trim.find('#')]
                 lines[i] = jl_source.differential_equation_header2(vector_name,elemets_num)
+                if rep_line_trim.find('#')!=-1:
+                    lines[i] = lines[i].rstrip() + ' ' + rep_line[rep_line.find('#'):]
             else:
                 lines[i] = ''
+
     is_keyword = False
     for i, line in enumerate(lines):
         if (lines[i-1].replace(' ', '').find('diffeq(t,y,x):') != -1
@@ -179,8 +146,6 @@ def make_differential_equation(jl_dir, py_dir, space_num=4):
             #print('test:end of values is found\n\n\n\n')
         if is_keyword:
             differential_equation += line
-
-    differential_equation += jl_source.differential_equation_footer()
 
     with open(jl_dir, mode='w') as f:
         f.write(differential_equation)

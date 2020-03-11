@@ -20,7 +20,7 @@ def make_observable(jl_dir, py_dir):
 
     observables = triming_tools.cut_out_lines(lines,'observables=[',']')[1:]
     for i,line in enumerate(observables):
-        observable += line.replace(',','')
+        observable += line.replace(',','').replace('\'','\"')
 
     observable += jl_source_observable.observable_body()
 
@@ -62,8 +62,10 @@ def make_simulation(jl_dir, py_dir):
 
     conditions1 = triming_tools.cut_out_lines(lines,'def simulate(','enumerate(self.conditions)')
 
-    conditions1_1 = triming_tools.cut_out_lines(conditions1,'def simulate(','self._get_steady_state')
-    conditions1_2 = triming_tools.cut_out_lines(conditions1,'Y_steady_state','enumerate(self.conditions)')[1:]
+
+    conditions1_1 = triming_tools.cut_out_lines(conditions1,'def simulate(','_get_steady_state')[1:]
+    conditions1_2 = triming_tools.cut_out_lines(conditions1,'y0','enumerate(self.conditions)')[1:]
+    print(conditions1_2)
     for i,line in enumerate(conditions1_1):
         simulation += line
     simulation += jl_source_observable.simulation_body2()
@@ -137,7 +139,7 @@ def make_experimental_data(jl_dir, py_dir):
     
     experimental_data += jl_source_observable.get_timepoint_header()
 
-    get_timepoint = triming_tools.cut_out_lines(lines,'def get_timepoint','return')
+    get_timepoint = triming_tools.cut_out_lines(lines,'def get_timepoint','return')[1:]
     for i,line in enumerate(get_timepoint):
         rep_line = line
         rep_line = rep_line.replace('observables.index','obs_idx')

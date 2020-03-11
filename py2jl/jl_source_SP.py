@@ -13,9 +13,16 @@ def search_idx_const_footer():
     return '\
     ]\n\
 \n\
+'
+
+def search_idx_init_header():
+    return '\
     # initial values\n\
     search_idx_init::Vector{Int} = [\n\
-        # V.(variableName)\n\
+'
+
+def search_idx_init_footer():
+    return '\
     ]\n\
 \n\
     return search_idx_const, search_idx_init\n\
