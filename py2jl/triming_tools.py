@@ -2,43 +2,45 @@ def lines_triming(lines, space_num=4):
 
     lines = convert_comment_out(lines)
     lines = remove_backslash(lines)
-    lines = normalize_blanks(lines,space_num)
+    lines = normalize_blanks(lines, space_num)
     lines = replace_characters(lines)
-    
 
     return lines
 
 
 def remove_backslash(lines):
-    for i,line in enumerate(lines):
+    for i, line in enumerate(lines):
         # processing exceptions
-        if line.find('param_names = [\\')!=-1 or line.find('var_names = [\\')!=-1 \
-            or line.find('\'len_f_params\'\\')!=-1 or line.find('\'len_f_vars\'\\')!=-1:
-            lines[i] = lines[i].replace('\\',' ')
-    
+        if (line.find('param_names = [\\') != -1
+                or line.find('var_names = [\\') != -1
+                or line.find('\'len_f_params\'\\') != -1
+                or line.find('\'len_f_vars\'\\') != -1
+                ):
+            lines[i] = lines[i].replace('\\', ' ')
         else:
-            while(lines[i][-3:].find('\\\n')!=-1):
-                lines[i] = lines[i].rstrip().replace('\\',' ') + lines[i+1].lstrip()
+            while(lines[i][-3:].find('\\\n') != -1):
+                lines[i] = lines[i].rstrip().replace(
+                    '\\', ' '
+                ) + lines[i+1].lstrip()
                 lines.pop(i+1)
-    
     return lines
 
 
-def normalize_blanks(lines,space_num):
+def normalize_blanks(lines, space_num):
     for i, line in enumerate(lines):
         lines[i] = line.replace('\t', '    ')
         if line.strip(' ') == '':
             lines[i] = '\n'
 
     for i, line in enumerate(lines):
-        lines[i] = normalize_indent(line,space_num)
+        lines[i] = normalize_indent(line, space_num)
 
     return lines
 
 
-def normalize_indent(line,space_num):
-    indent='    '
-    indents=''
+def normalize_indent(line, space_num):
+    indent = '    '
+    indents = ''
     for i in range(space_counter(line)//space_num):
         indents += indent
     line = indents + line.lstrip(' ')
@@ -56,16 +58,21 @@ def space_counter(line):
 
 
 def replace_characters(lines):
-    for i,line in enumerate(lines):
+    for i, line in enumerate(lines):
         rep_line = line
 
-        if rep_line.find('for ') != -1 and rep_line.find(' in ') and rep_line.find(':') != -1:
-            rep_line = rep_line[:rep_line.find('for ')] + 'for (' \
-                + rep_line[rep_line.find('for ')+4:rep_line.find(' in ')] + ')'\
-                + rep_line[rep_line.find(' in '):]
+        if (rep_line.find('for ') != -1
+                and rep_line.find(' in ')
+                and rep_line.find(':') != -1
+                ):
+            rep_line = rep_line[:rep_line.find('for ')] + 'for (' + \
+                rep_line[rep_line.find('for ')+4:rep_line.find(' in ')] + ')' + \
+                rep_line[rep_line.find(' in '):]
 
-        if (rep_line.find('if ') != -1 or rep_line.find('elif ') != -1 or rep_line.find('else') != -1 or rep_line.find('for ') != -1) \
-            and rep_line.find(':') != -1:
+        if (rep_line.find('if ') != -1
+            or rep_line.find('elif ') != -1
+            or rep_line.find('else') != -1
+                or rep_line.find('for ') != -1) and rep_line.find(':') != -1:
             rep_line = rep_line.replace(':', '')
 
         rep_line = rep_line.replace(']:', ']')
@@ -77,15 +84,13 @@ def replace_characters(lines):
         rep_line = rep_line.replace('elif ', 'elseif ')
         rep_line = rep_line.replace('\'', '\"')
 
-
-
         lines[i] = rep_line
     return lines
 
 
 def insert_end(lines):
     end_lines = search_end(lines)
-    #print(end_lines)
+    # print(end_lines)
     for i, end_line in enumerate(end_lines):
         ind = ''
         for j in range(end_line[1]):
@@ -105,45 +110,47 @@ def search_end(lines):
     bracket1 = 0
     bracket2 = 0
     bracket3 = 0
-    
 
     # count not normalized indents
     for i, line in enumerate(lines):
         if line.strip() == '':
             ind = prev
             #print(i,' is blank line')
-        elif bracket1>0 or bracket2>0 or bracket3>0:
+        elif bracket1 > 0 or bracket2 > 0 or bracket3 > 0:
             ind = prev
         else:
             c = 0
             ind = 0
-            while(line[c]==' '):
-                c+=1
+            while(line[c] == ' '):
+                c += 1
             ind = line[:c].count('    ')
 
-            if line.find('else') != -1 or line.find('elif') != -1 or line.find('elif') != -1:
+            if (line.find('else') != -1
+                    or line.find('elif') != -1
+                    or line.find('elif') != -1
+                    ):
                 ind = ind + 1
             prev = ind
 
         # ditict bracket
-        if line.count('(') - line.count(')') >0:
+        if line.count('(') - line.count(')') > 0:
             bracket1 += line.count('(') - line.count(')')
         else:
-            bracket1 -=  line.count(')') - line.count('(')
-        if line.count('{') - line.count('}') >0:
+            bracket1 -= line.count(')') - line.count('(')
+        if line.count('{') - line.count('}') > 0:
             bracket2 += line.count('{') - line.count('}')
         else:
-            bracket2 -=  line.count('}') - line.count('{')
-        if line.count('[') - line.count(']') >0:
+            bracket2 -= line.count('}') - line.count('{')
+        if line.count('[') - line.count(']') > 0:
             bracket3 += line.count('[') - line.count(']')
         else:
-            bracket3 -=  line.count(']') - line.count('[')
+            bracket3 -= line.count(']') - line.count('[')
 
         indents.append(ind)
 
     # count normalized indents
     for i in range(len(lines)):
-        if i>0 :
+        if i > 0:
             diff = indents[i-1] - indents[i]
             if diff > 0:
                 # processing blank
@@ -156,39 +163,40 @@ def search_end(lines):
                     end_lines.append([i-j+1, indents[i-1]-1-k])
 
             # processing the last of sentences
-            if i==len(lines)-1:
+            if i == len(lines)-1:
                 j = 0
-                while indents[i] - indents[0]!=j:
+                while indents[i] - indents[0] != j:
                     j = j + 1
-                    end_lines.append([i,indents[i]-j])
+                    end_lines.append([i, indents[i]-j])
 
     # for i,line in enumerate(lines):
     #     print(indents[i],line.rstrip())
     # print(end_lines)
 
-    #for i,line in enumerate(lines):
+    # for i,line in enumerate(lines):
     #    print(indents[i],line.replace('\n',''))
     return end_lines
 
 
 def convert_comment_out(lines):
-    count_single=0
-    count_double=0
-    for i,line in enumerate(lines):
-        if line.find('\'\'\'')!=-1:
-            count_single +=1
-        if count_single%2==1:
-            lines[i] = line.replace('\'\'\'','#=')
+    count_single = 0
+    count_double = 0
+    for i, line in enumerate(lines):
+        if line.find('\'\'\'') != -1:
+            count_single += 1
+        if count_single % 2 == 1:
+            lines[i] = line.replace('\'\'\'', '#=')
         else:
-            lines[i] = line.replace('\'\'\'','=#')
-    for i,line in enumerate(lines):
-        if line.find('\"\"\"')!=-1:
-            count_double +=1
-        if count_double%2==1:
-            lines[i] = line.replace('\"\"\"','#=')
+            lines[i] = line.replace('\'\'\'', '=#')
+    for i, line in enumerate(lines):
+        if line.find('\"\"\"') != -1:
+            count_double += 1
+        if count_double % 2 == 1:
+            lines[i] = line.replace('\"\"\"', '#=')
         else:
-            lines[i] = line.replace('\"\"\"','=#')
+            lines[i] = line.replace('\"\"\"', '=#')
     return lines
+
 
 def insert_after_indent(line, string):
     rep_line = string + line.lstrip(' ')
@@ -197,23 +205,24 @@ def insert_after_indent(line, string):
 
     return rep_line
 
-def indent_remover(line,num,space_num=4):
-    if len(line)>4*num:
+
+def indent_remover(line, num, space_num=4):
+    if len(line) > 4*num:
         line = line[4*num:]
     else:
         line = '\n'
-    
+
     return line
 
 
-def cut_out_line(lines,keyword):
-    for i,line in enumerate(lines):
-        if line.replace(' ','').find(keyword.replace(' ',''))!=-1:
+def cut_out_line(lines, keyword):
+    for i, line in enumerate(lines):
+        if line.replace(' ', '').find(keyword.replace(' ', '')) != -1:
             return line
     return ''
 
 
-def cut_out_lines(lines,start_keyword='',end_keyword='',mode=0):
+def cut_out_lines(lines, start_keyword='', end_keyword='', mode=0):
     # mode 0 : start is the last line including start_keyword of lines
     # mode 1 : start is the first line including start_keyword of lines
 
@@ -221,30 +230,32 @@ def cut_out_lines(lines,start_keyword='',end_keyword='',mode=0):
     end = -1
     escape = False
     find = False
-    
-    for i,line in enumerate(lines):
-        line = line.replace(' ','')
-        if line.find(start_keyword.replace(' ',''))!=-1 and not escape:
+
+    for i, line in enumerate(lines):
+        line = line.replace(' ', '')
+        if line.find(start_keyword.replace(' ', '')) != -1 and not escape:
             if start_keyword != '':
                 start = i
                 find = True
-                if mode==1:
+                if mode == 1:
                     escape = True
-        elif line.find(end_keyword.replace(' ',''))!=-1:
+        elif line.find(end_keyword.replace(' ', '')) != -1:
             if find and end_keyword != '':
                 end = i
                 break
 
-    if end==-1:
+    if end == -1:
         return lines[start:]
     else:
         return lines[start:end]
 
+
 def copy_list(line):
-    if line.find('[:]')==-1:
+    if line.find('[:]') == -1:
         return line
 
-    params = line[line.find('=')+1:line.find('[:]')].replace(' ','')
-    copy = line[:line.find('=')+1] + ' copy(' + params + ')' + line[line.find('[:]')+3:]
+    params = line[line.find('=')+1:line.find('[:]')].replace(' ', '')
+    copy = line[:line.find('=')+1] + ' copy(' + params + \
+        ')' + line[line.find('[:]')+3:]
 
     return copy
