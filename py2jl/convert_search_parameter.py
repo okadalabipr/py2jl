@@ -1,7 +1,7 @@
 import os
 import re
 from py2jl import triming_tools
-from py2jl import jl_source_SP
+from py2jl import jl_source
 
 
 def convert_search_parameter(jl_dir, py_dir):
@@ -10,22 +10,21 @@ def convert_search_parameter(jl_dir, py_dir):
     with open(py_dir+'/search_parameter.py') as f:
         lines = f.readlines()
 
-    search_parameter = jl_source_SP.header()
-    search_parameter += jl_source_SP.search_idx_const_header()
+    search_parameter = jl_source.header()
 
-    search_idx_const=[]
-    is_keyword=False
-    for i,line in enumerate(lines):
-        key = line.replace(' ','')
-        if key.find('search_idx_const=np.array([') != -1:
-            is_keyword=True
-        elif is_keyword:
-            if line.find(']') != -1:
-                break
-            search_parameter += line.replace(',','')    
-    search_parameter += jl_source_SP.search_idx_const_footer()
+    search_parameter += jl_source.search_idx_const_header()
+    search_idx_const = triming_tools.cut_out_lines(lines, 'search_idx_const=np.array([',']')[1:]
+    for i,line in enumerate(search_idx_const):
+        search_parameter += line.replace('\\','')
+    search_parameter += jl_source.search_idx_const_footer()
 
-    search_parameter += jl_source_SP.get_search_region_header()
+    search_parameter += jl_source.search_idx_init_header()
+    search_idx_init = triming_tools.cut_out_lines(lines, 'search_idx_init',']')[1:]
+    for i,line in enumerate(search_idx_init):
+        search_parameter += line.replace('\\','')
+    search_parameter += jl_source.search_idx_init_footer()
+
+    search_parameter += jl_source.get_search_region_header()
 
     lines = triming_tools.convert_comment_out(lines)
     lines = triming_tools.lines_triming(lines, space_num)
@@ -45,10 +44,10 @@ def convert_search_parameter(jl_dir, py_dir):
                 break
             search_parameter += line
 
-    search_parameter += jl_source_SP.get_search_region_footer()
-    search_parameter += jl_source_SP.lin2log()
+    search_parameter += jl_source.get_search_region_footer()
+    search_parameter += jl_source.lin2log()
 
-    with open(jl_dir+'/search_params.jl',mode='w')as f:
+    with open(jl_dir+'/search_parameter.jl',mode='w')as f:
         f.write(search_parameter)
 
     

@@ -213,23 +213,38 @@ def cut_out_line(lines,keyword):
     return ''
 
 
-def cut_out_lines(lines,start_keyword,end_keyword,mode=0):
+def cut_out_lines(lines,start_keyword='',end_keyword='',mode=0):
     # mode 0 : start is the last line including start_keyword of lines
     # mode 1 : start is the first line including start_keyword of lines
 
-    start = 0
+    start = -1
     end = -1
     escape = False
+    find = False
     
     for i,line in enumerate(lines):
         line = line.replace(' ','')
         if line.find(start_keyword.replace(' ',''))!=-1 and not escape:
             if start_keyword != '':
                 start = i
+                find = True
                 if mode==1:
                     escape = True
         elif line.find(end_keyword.replace(' ',''))!=-1:
-            if end_keyword != '':
+            if find and end_keyword != '':
                 end = i
                 break
-    return lines[start:end]
+
+    if end==-1:
+        return lines[start:]
+    else:
+        return lines[start:end]
+
+def copy_list(line):
+    if line.find('[:]')==-1:
+        return line
+
+    params = line[line.find('=')+1:line.find('[:]')].replace(' ','')
+    copy = line[:line.find('=')+1] + ' copy(' + params + ')' + line[line.find('[:]')+3:]
+
+    return copy
