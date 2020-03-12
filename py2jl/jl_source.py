@@ -122,7 +122,7 @@ def observable_body():
     return '\
 ];\n\
 \n\
-function obs_idx(observable_name::String)::Int\n\
+function observables_index(observable_name::String)::Int\n\
 \n\
     return findfirst(isequal(observable_name),observables)\n\
 end\
@@ -189,7 +189,7 @@ end # module\
 
 
 def get_timepoint_header():
-    return '\nfunction get_timepoint(observalbe::Int)\n'
+    return '\nfunction get_timepoint(obs_idx::Int)\n'
 
 def get_timepoint_footer():
     return '\

@@ -99,7 +99,7 @@ def make_simulation(jl_dir, py_dir):
         if rep_line.find('class ExperimentalData') != -1:
             break
         rep_line = rep_line.replace('self.', '')
-        rep_line = rep_line.replace('observables.index', 'obs_idx')
+        rep_line = rep_line.replace('observables.index', 'observables_index')
         if rep_line.find('Y[:, ') != -1:
             rep_line = rep_line.replace('Y[:, ', 'sol.u[j][')
         else:
@@ -127,7 +127,7 @@ def make_experimental_data(jl_dir, py_dir):
     bracket = False
     for i, line in enumerate(lines):
         rep_line = line
-        rep_line = rep_line.replace('observables.index', 'obs_idx')
+        rep_line = rep_line.replace('observables.index', 'observables_index')
 
         if 0 < rep_line.find('=') < rep_line.find('[') < rep_line.find(']'):
             rep_line = triming_tools.insert_after_indent(rep_line, 'const ')
@@ -158,7 +158,7 @@ def make_experimental_data(jl_dir, py_dir):
     )[1:]
     for i, line in enumerate(get_timepoint):
         rep_line = line
-        rep_line = rep_line.replace('observables.index', 'obs_idx')
+        rep_line = rep_line.replace('observables.index', 'observables_index')
         if line.find('return') != -1:
             break
         if line.replace(' ', '').find('exp_t=self.') != -1:
