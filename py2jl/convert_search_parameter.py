@@ -14,7 +14,7 @@ def convert_search_parameter(jl_dir, py_dir):
 
     search_parameter += jl_source.search_idx_const_header()
     search_idx_const = triming_tools.cut_out_lines(
-        lines, 'search_idx_const=np.array([', ']'
+        lines, 'search_idx_const=[', ']'
     )[1:]
     for i, line in enumerate(search_idx_const):
         search_parameter += line.replace('\\', '')
@@ -22,7 +22,7 @@ def convert_search_parameter(jl_dir, py_dir):
 
     search_parameter += jl_source.search_idx_init_header()
     search_idx_init = triming_tools.cut_out_lines(
-        lines, 'search_idx_init', ']'
+        lines, 'search_idx_init=[', ']'
     )[1:]
     for i, line in enumerate(search_idx_init):
         search_parameter += line.replace('\\', '')
