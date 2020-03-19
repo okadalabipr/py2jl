@@ -39,7 +39,9 @@ def convert_search_parameter(jl_dir, py_dir):
     # for i,line in enumerate(lines):
     #    print(line.replace('\n',''))
 
-    search_region = triming_tools.cut_out_lines(lines, 'search_region=np.zeros', 'lin2log')[1:]
+    search_region = triming_tools.cut_out_lines(
+        lines, 'search_region=np.zeros', 'lin2log'
+    )[1:]
     for i,line in enumerate(search_region):
         line = line.replace('for i, j', 'for (i,j)')
         line = line.replace('np.', '')
@@ -51,5 +53,5 @@ def convert_search_parameter(jl_dir, py_dir):
     search_parameter += jl_source.get_search_region_footer()
     search_parameter += jl_source.lin2log()
 
-    with open(jl_dir+'/search_parameter.jl', mode='w')as f:
+    with open(jl_dir + '/search_parameter.jl', mode='w') as f:
         f.write(search_parameter)
