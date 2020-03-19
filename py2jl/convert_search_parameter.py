@@ -5,6 +5,9 @@ from py2jl import jl_source
 
 
 def convert_search_parameter(jl_dir, py_dir):
+    os.makedirs(
+        jl_dir, exist_ok=True
+    )
 
     space_num = 4
     with open(py_dir+'/search_parameter.py') as f:
@@ -36,17 +39,12 @@ def convert_search_parameter(jl_dir, py_dir):
     # for i,line in enumerate(lines):
     #    print(line.replace('\n',''))
 
-    is_keyword = False
-    for i, line in enumerate(lines):
-        key = line.replace(' ', '')
-        if key.find('search_region=np.zeros') != -1:
-            is_keyword = True
-        elif is_keyword:
-            line = line.replace('for i, j', 'for (i,j)')
-            line = line.replace('np.', '')
-            if line.find('lin2log') != -1:
-                break
-            search_parameter += line
+    search_region = triming_tools.cut_out_lines(lines, 'search_region=np.zeros', 'lin2log')[1:]
+    for i,line in enumerate(search_region):
+        line = line.replace('for i, j', 'for (i,j)')
+        line = line.replace('np.', '')
+        line = triming_tools.list_adder(line)
+        search_parameter += line
 
     search_parameter += jl_source.get_search_region_footer()
     search_parameter += jl_source.lin2log()

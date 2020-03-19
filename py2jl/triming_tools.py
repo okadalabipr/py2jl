@@ -259,3 +259,22 @@ def copy_list(line):
         ')' + line[line.find('[:]')+3:]
 
     return copy
+
+
+def list_adder(line):
+    rep_line = line
+    bra = -1
+    ket = -1
+    for i,letter in enumerate(line):
+        if letter == '[':
+            bra = i
+        if letter == ']' or letter == ',':
+            ket = i
+            if bra < ket:
+                if line[bra+1:ket].isnumeric():
+                    added = str(int(line[bra+1:ket]) + 1)
+                    rep_line = rep_line[:bra+1] + added +  line[ket:]
+            bra = i
+    return rep_line
+
+            
