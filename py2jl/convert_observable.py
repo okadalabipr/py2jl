@@ -66,28 +66,25 @@ def make_simulation(jl_dir, py_dir):
 
     simulation += jl_source.simulation_body1()
 
-    conditions1 = triming_tools.cut_out_lines(
-        lines, 'def simulate(', 'enumerate(self.conditions)'
-    )
-    conditions1_1 = triming_tools.cut_out_lines(
-        conditions1, 'def simulate(', '_get_steady_state'
-    )[1:]
-    conditions1_2 = triming_tools.cut_out_lines(
-        conditions1, 'y0', 'enumerate(self.conditions)'
-    )[1:]
-    for i, line in enumerate(conditions1_1):
-        simulation += line
-    simulation += jl_source.simulation_body2()
-    for i, line in enumerate(conditions1_2):
-        simulation += line
 
+    conditions1 = triming_tools.cut_out_lines(
+        lines, 'def simulate(', 'steady_state'
+    )[1:]
     conditions2 = triming_tools.cut_out_lines(
-        lines, 'for(i,condition)', 'self._solveode'
-    )
+        lines, '=copy', 'solveode',mode=1
+    )[1:]
+
     conditions2 = triming_tools.insert_end(conditions2)[:-2]
 
+    for i, line in enumerate(conditions1):
+        simulation += line
+
+    simulation += jl_source.simulation_body2()
+
     for i, line in enumerate(conditions2):
-        simulation += line.replace('self.', '')
+        simulation += line
+
+
 
     simulation += jl_source.simulation_body3()
 
@@ -128,9 +125,6 @@ def make_experimental_data(jl_dir, py_dir):
     for i, line in enumerate(lines):
         rep_line = line
         rep_line = rep_line.replace('observables.index', 'observables_index')
-
-        if 0 < rep_line.find('=') < rep_line.find('[') < rep_line.find(']'):
-            rep_line = triming_tools.insert_after_indent(rep_line, 'const ')
 
         key = line.replace(' ', '')
         if key.find('={') != -1:

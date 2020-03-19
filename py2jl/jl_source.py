@@ -167,11 +167,6 @@ def simulation_body2():
 
 def simulation_body3():
     return '\n\
-            prob = ODEProblem(diffeq,u0,tspan,p)\n\
-            sol = solve(\n\
-                prob,CVODE_BDF(),saveat=1.0,dtmin=1e-8,\n\
-                abstol=1e-9,reltol=1e-9,verbose=false\n\
-            )\n\
             @inbounds @simd for j in eachindex(t)\n\
 '
 
