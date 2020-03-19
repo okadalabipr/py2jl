@@ -43,6 +43,8 @@ def convert_search_parameter(jl_dir, py_dir):
     for i,line in enumerate(search_region):
         line = line.replace('for i, j', 'for (i,j)')
         line = line.replace('np.', '')
+        line = line.replace('len', 'length')
+        line = line.replace('(x)', '(p)')
         line = triming_tools.list_adder(line)
         search_parameter += line
 
