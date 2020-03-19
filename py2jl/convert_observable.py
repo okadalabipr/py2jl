@@ -74,8 +74,6 @@ def make_simulation(jl_dir, py_dir):
         lines, '=copy', 'solveode',mode=1
     )[1:]
 
-    print(conditions2)
-
     conditions2 = triming_tools.insert_end(conditions2)[:-2]
 
     for i, line in enumerate(conditions1):
