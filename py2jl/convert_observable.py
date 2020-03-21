@@ -112,7 +112,7 @@ def make_simulation(jl_dir, py_dir):
 
 
 def make_experimental_data(jl_dir, py_dir):
-    with open(py_dir+'/observable.py') as f:
+    with open(py_dir + '/observable.py') as f:
         lines = f.readlines()
     for i, line in enumerate(lines):
         if line.find('class ExperimentalData') != -1:
@@ -164,5 +164,5 @@ def make_experimental_data(jl_dir, py_dir):
 
     experimental_data += jl_source.get_timepoint_footer()
 
-    with open(jl_dir+'/experimental_data.jl', mode='w')as f:
+    with open(jl_dir+'/experimental_data.jl', mode='w') as f:
         f.write(experimental_data)
