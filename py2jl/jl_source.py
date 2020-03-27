@@ -162,7 +162,7 @@ def simulation_body2():
         prob = ODEProblem(diffeq,u0,(0.0,Inf),p)\n\
         prob = SteadyStateProblem(prob)\n\
         sol = solve(\n\
-            prob,DynamicSS(CVODE_BDF()),\n\
+            prob,DynamicSS(CVODE_BDF()),dtmin=1e-8,\n\
             abstol=1e-9,reltol=1e-9,dt=1.0,verbose=false\n\
         )\n\
         u0 = sol.u\n\
