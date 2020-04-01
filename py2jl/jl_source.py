@@ -144,7 +144,8 @@ include("./observable.jl")\n\
 using ..Model\n\
 \n\
 using Sundials\n\
-using SteadyStateDiffEq\n\
+# using SteadyStateDiffEq\n\
+const STEADY_STATE_EPS = 1e-6n\n\
 \n\
 '
 
@@ -159,13 +160,20 @@ function simulate!(p::Vector{Float64}, u0::Vector{Float64})\n\
 
 def simulation_body2():
     return '\
-        prob = ODEProblem(diffeq,u0,(0.0,Inf),p)\n\
-        prob = SteadyStateProblem(prob)\n\
-        sol = solve(\n\
-            prob,DynamicSS(CVODE_BDF()),dtmin=1e-8,\n\
-            abstol=1e-9,reltol=1e-9,dt=1.0,verbose=false\n\
-        )\n\
-        u0 = sol.u\n\
+        iter::Int8 = 0\n\
+        while iter < 10\n\
+            prob = ODEProblem(diffeq,u0,tspan,p)\n\
+            sol = solve(\n\
+                prob,CVODE_BDF(),\n\
+                abstol=1e-9,reltol=1e-9,dtmin=1e-8,verbose=false\n\
+            )\n\
+            if all(abs.(sol.u[end] - u0) .< STEADY_STATE_EPS)\n\
+                break\n\
+            else\n\
+                u0 .= sol.u[end]\n\
+                iter += 1\n\
+            end\n\
+        end\n\
 '
 
 def simulation_body3():
